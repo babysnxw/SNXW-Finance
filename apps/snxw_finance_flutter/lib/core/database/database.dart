@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'income_record.dart';
+
 class AppDatabase {
   AppDatabase._();
 
@@ -18,7 +20,9 @@ class AppDatabase {
     final Directory directory = await _resolveDirectory();
 
     return Isar.open(
-      const <CollectionSchema<dynamic>>[],
+      const <CollectionSchema<dynamic>>[
+        IncomeRecordSchema,
+      ],
       directory: directory.path,
       name: _databaseName,
     );
