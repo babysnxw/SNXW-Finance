@@ -8,25 +8,11 @@ class SnxwFinanceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'SNXW Finance',
       debugShowCheckedModeBanner: false,
       theme: appTheme,
-      routes: appRoutes,
-      home: const AppShell(),
-    );
-  }
-}
-
-class AppShell extends StatelessWidget {
-  const AppShell({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('SNXW Finance'),
-      ),
+      routerConfig: appRouter,
     );
   }
 }
