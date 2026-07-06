@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'expense_record.dart';
 import 'income_record.dart';
 
 class AppDatabase {
@@ -21,6 +22,7 @@ class AppDatabase {
 
     return Isar.open(
       const <CollectionSchema<dynamic>>[
+        ExpenseRecordSchema,
         IncomeRecordSchema,
       ],
       directory: directory.path,
