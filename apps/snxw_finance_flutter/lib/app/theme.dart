@@ -1,6 +1,2 @@
-import 'package:flutter/material.dart';
-
-final ThemeData appTheme = ThemeData(
-  useMaterial3: true,
-  colorSchemeSeed: const Color(0xFF1E5EFF),
-);
+export '../shared/design/app_theme.dart' show AppTheme;
+export '../shared/design/design.dart';

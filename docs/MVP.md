@@ -1,111 +1,68 @@
-# 🎯 MVP — SNXW Finance
+# MVP - SNXW Finance
 
-## 🧠 Objective
+## Objective
 
-Build the smallest possible version of SNXW Finance that provides **real financial decision support**, not just expense tracking.
+Build the smallest useful version of SNXW Finance as a Personal Financial Planning platform.
 
-The MVP must answer one question clearly:
+The MVP should help users understand their financial position, organize financial goals, and make better decisions without relying on bank integrations or hidden automation.
 
-> "What is my real financial situation right now?"
+## Core Product Focus
 
----
+The MVP centers on:
 
-## 📦 Core Features (MVP 0.1)
+- Planning and forecasting
+- Financial goals as first-class citizens
+- Debt visibility and payment awareness
+- Simple financial health indicators
+- User-owned data
 
-### 1. Income Tracking
-- Add manual income entries
-- Weekly / monthly income view
+## Core Features
 
----
+### 1. Dashboard
+- Show a concise view of the user's financial situation
+- Surface key summaries for planning
+- Highlight upcoming obligations
 
-### 2. Expense Tracking
-- Manual expense input
-- Categorization (food, transport, debt, etc.)
-- Weekly spending summary
+### 2. Income
+- Allow manual income capture
+- Support a simple monthly view for planning
 
----
+### 3. Debts
+- Allow manual debt registration
+- Track essential debt details for planning and prioritization
 
-### 3. Debt Tracking (Critical Feature)
-- Add multiple debts:
-  - Credit cards
-  - Loans
-- Store:
-  - Total debt
-  - Minimum payment
-  - Due date
-  - Interest rate (optional MVP)
+### 4. Payments
+- Register scheduled or completed payments manually
+- Support visibility into upcoming obligations
 
----
+### 5. Financial Goals
+- Let users define and follow personal financial goals
+- Treat goals as a core part of the planning experience
 
-### 4. Simple Financial Overview
-A dashboard that shows:
+### 6. Settings
+- Support basic configuration and user preferences
 
-- Current cash flow status
-- Upcoming payments
-- Total debt exposure
-- Available spending capacity (basic calculation)
+## Out of Scope
 
----
+These are intentionally excluded from the MVP:
 
-## 🧠 Core Intelligence (Simple Rules Engine v0)
-
-The MVP will include a basic logic system:
-
-- If expenses > income → WARNING
-- If upcoming debts > available cash → ALERT
-- If user can pay extra → SUGGEST early payment
-- If multiple debts exist → prioritize by due date
-
----
-
-## 🚫 Out of Scope (IMPORTANT)
-
-These WILL NOT be included in MVP:
-
-- AI predictions
+- Bank credentials storage
 - Bank integrations
-- Automatic transactions
-- Investment features
-- Crypto or trading features
-- Complex analytics dashboards
+- Automatic transaction syncing
+- AI-driven predictions
+- Investment or trading features
+- Cryptocurrency features
+- Complex analytics suites
 
-We stay SIMPLE.
+## Success Criteria
 
----
+The MVP is successful if:
 
-## 📱 MVP Screens (Flutter later)
+- Users can understand their financial health quickly
+- Users can see what matters next in their plan
+- Users can prioritize goals and obligations with confidence
+- Users feel ownership and trust in their data
 
-1. Dashboard
-2. Add Income
-3. Add Expense
-4. Debts Overview
-5. Basic Settings
+## Philosophy Reminder
 
----
-
-## 🧱 Data Model (Conceptual)
-
-- Income
-- Expense
-- Debt
-- Payment Schedule
-
----
-
-## 🎯 Success Criteria
-
-MVP is successful if:
-
-- User understands their financial situation in < 10 seconds
-- User can identify next critical payment instantly
-- User can see if they are financially safe this week
-
----
-
-## ⚡ Philosophy Reminder
-
-> "We are not building a tracker. We are building a decision system."
-
-SNXW Finance must always prioritize **clarity over complexity**.
-
----
+SNXW Finance is not a transaction logger. It is a decision-support platform for personal financial planning.

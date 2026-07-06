@@ -11,7 +11,8 @@ class SnxwFinanceApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'SNXW Finance',
       debugShowCheckedModeBanner: false,
-      theme: appTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       routerConfig: appRouter,
     );
   }

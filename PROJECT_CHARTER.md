@@ -14,20 +14,23 @@ SNXW Labs
 
 ## Mission
 
-Build an intelligent personal finance application that helps users make better financial decisions, not just record expenses.
+Build a Personal Financial Planning platform that helps users make better financial decisions while keeping privacy, security, and user data ownership first.
 
 ## Vision
 
-Become an open-source financial assistant focused on planning, forecasting and financial education.
+Become an open-source Personal Financial Planning platform focused on planning, forecasting, financial health, and user trust.
 
 ## Principles
 
 - Simplicity
 - Transparency
 - Privacy First
-- Offline First
+- Security First
+- User owns their data
 - Open Source
 - User Centric
+- Planning First
+- Financial Goals First
 
 ## Success Criteria
 
@@ -37,3 +40,4 @@ A user should be able to answer:
 - What happens if I pay extra this month?
 - Which debt should I pay first?
 - How much money can I safely spend this week?
+- Am I on track for my financial goals?
