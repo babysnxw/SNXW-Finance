@@ -37,7 +37,8 @@ class DashboardPage extends ConsumerWidget {
 
 		return Scaffold(
 			appBar: AppBar(
-				title: const Text('Dashboard'),
+				title: const Text('Snxw Finance'),
+				centerTitle: false,
 			),
 			body: SafeArea(
 				child: _DashboardContent(metricsAsync: metricsAsync),
@@ -109,12 +110,12 @@ class _GreetingSection extends StatelessWidget {
 			crossAxisAlignment: CrossAxisAlignment.start,
 			children: <Widget>[
 				Text(
-					'Good morning 👋',
+					'¡Buenos días! 👋',
 					style: AppTypography.title.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
 				),
 				const SizedBox(height: AppSpacing.sm),
 				Text(
-					'Take control.\nBuild your future.',
+					'Así va tu dinero hoy.',
 					style: AppTypography.display.copyWith(color: Theme.of(context).colorScheme.onSurface),
 				),
 			],
@@ -148,9 +149,9 @@ class _SummaryCardsGrid extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		final List<_SummaryCardData> items = <_SummaryCardData>[
-			_SummaryCardData(title: 'Net Balance', value: _formatCurrency(metrics.netBalance)),
-			_SummaryCardData(title: 'Total Income', value: _formatCurrency(metrics.totalIncome)),
-			_SummaryCardData(title: 'Total Expenses', value: _formatCurrency(metrics.totalExpenses)),
+			_SummaryCardData(title: '💰 Disponible', value: _formatCurrency(metrics.netBalance)),
+			_SummaryCardData(title: '📈 Ingresos', value: _formatCurrency(metrics.totalIncome)),
+			_SummaryCardData(title: '📉 Gastos', value: _formatCurrency(metrics.totalExpenses)),
 		];
 
 		return Wrap(
@@ -245,12 +246,12 @@ class _UpcomingPaymentsCard extends StatelessWidget {
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: <Widget>[
 						Text(
-							'Upcoming Payments',
+							'Próximos pagos',
 							style: AppTypography.title.copyWith(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w700),
 						),
 						const SizedBox(height: AppSpacing.md),
 						Text(
-							'No payments scheduled.',
+							'No tienes pagos pendientes.',
 							style: AppTypography.body.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
 						),
 					],
@@ -269,29 +270,41 @@ class _QuickActionsSection extends StatelessWidget {
 			runSpacing: AppSpacing.sm,
 			spacing: AppSpacing.sm,
 			children: <Widget>[
-				_QuickActionButton(label: 'Income', route: '/income'),
-				_QuickActionButton(label: 'Expense', route: '/expenses'),
-				_QuickActionButton(label: 'Cash Accounts', route: '/cash-accounts'),
-				_QuickActionButton(label: 'Debts', route: '/debts'),
-				_QuickActionButton(label: 'Goals', route: '/goals'),
+				_QuickActionButton(label: 'Ingresos', icon: Icons.arrow_downward, route: '/income'),
+				_QuickActionButton(label: 'Gastos', icon: Icons.arrow_upward, route: '/expenses'),
+				_QuickActionButton(label: 'Cuentas', icon: Icons.account_balance, route: '/cash-accounts'),
+				_QuickActionButton(label: 'Deudas', icon: Icons.assignment, route: '/debts'),
+				_QuickActionButton(label: 'Metas', icon: Icons.flag, route: '/goals'),
 			],
 		);
 	}
 }
 
 class _QuickActionButton extends StatelessWidget {
-	const _QuickActionButton({required this.label, required this.route});
+  const _QuickActionButton({
+    required this.label,
+    required this.icon,
+    required this.route,
+  });
 
-	final String label;
-	final String route;
+  final String label;
+  final IconData icon;
+  final String route;
 
-	@override
-	Widget build(BuildContext context) {
-		return FilledButton.tonal(
-			onPressed: () => context.go(route),
-			child: Text(label),
-		);
-	}
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.tonal(
+      onPressed: () => context.go(route),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18),
+          const SizedBox(width: 8),
+          Text(label),
+        ],
+      ),
+    );
+  }
 }
 
 String _formatCurrency(double value) {
