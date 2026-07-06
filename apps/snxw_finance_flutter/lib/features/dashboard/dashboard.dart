@@ -1,32 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../core/database/database_provider.dart';
+import '../../core/repositories/expense_repository.dart';
+import '../../core/repositories/income_repository.dart';
 import '../../shared/design/design.dart';
+import '../../shared/models/models.dart';
 
-class DashboardPage extends StatelessWidget {
+
+final FutureProvider<DashboardMetrics> dashboardMetricsProvider = FutureProvider<DashboardMetrics>(
+  (ref) async {
+    final IncomeRepository incomeRepository = IncomeRepository(await ref.watch(isarProvider.future));
+    final ExpenseRepository expenseRepository = ExpenseRepository(await ref.watch(isarProvider.future));
+
+    final List<Income> incomes = await incomeRepository.list();
+    final List<Expense> expenses = await expenseRepository.list();
+
+    final double totalIncome = incomes.fold<double>(0, (double total, Income income) => total + income.amount);
+    final double totalExpenses = expenses.fold<double>(0, (double total, Expense expense) => total + expense.amount);
+
+		return DashboardMetrics(
+      totalIncome: totalIncome,
+      totalExpenses: totalExpenses,
+      netBalance: totalIncome - totalExpenses,
+    );
+  },
+);
+
+class DashboardPage extends ConsumerWidget {
 	const DashboardPage({super.key});
 
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, WidgetRef ref) {
+		final AsyncValue<DashboardMetrics> metricsAsync = ref.watch(dashboardMetricsProvider);
+
 		return Scaffold(
 			appBar: AppBar(
 				title: const Text('Dashboard'),
 			),
-			body: const SafeArea(
-				child: _DashboardContent(),
+			body: SafeArea(
+				child: _DashboardContent(metricsAsync: metricsAsync),
 			),
 		);
 	}
 }
 
 class _DashboardContent extends StatelessWidget {
-	const _DashboardContent();
+	const _DashboardContent({required this.metricsAsync});
+
+	final AsyncValue<DashboardMetrics> metricsAsync;
 
 	@override
 	Widget build(BuildContext context) {
 		return LayoutBuilder(
 			builder: (BuildContext context, BoxConstraints constraints) {
-					final double horizontalPadding = constraints.maxWidth >= 900 ? AppSpacing.xl : AppSpacing.lg;
-					final double maxContentWidth = constraints.maxWidth >= 1200 ? 1120 : double.infinity;
+				final double horizontalPadding = constraints.maxWidth >= 900 ? AppSpacing.xl : AppSpacing.lg;
+				final double maxContentWidth = constraints.maxWidth >= 1200 ? 1120 : double.infinity;
 				final int summaryColumns = constraints.maxWidth >= 960
 					? 3
 					: constraints.maxWidth >= 640
@@ -36,25 +66,31 @@ class _DashboardContent extends StatelessWidget {
 				return Center(
 					child: ConstrainedBox(
 						constraints: BoxConstraints(maxWidth: maxContentWidth),
-						child: SingleChildScrollView(
-							padding: EdgeInsets.fromLTRB(horizontalPadding, AppSpacing.xl, horizontalPadding, AppSpacing.xl),
-							child: Column(
-								crossAxisAlignment: CrossAxisAlignment.start,
-								children: <Widget>[
-									const _GreetingSection(),
-									const SizedBox(height: AppSpacing.xl),
-									const _SectionHeader(title: 'Financial Summary'),
-									const SizedBox(height: AppSpacing.md),
-									_SummaryCardsGrid(columns: summaryColumns),
-									const SizedBox(height: AppSpacing.xl),
-									const _SectionHeader(title: 'Upcoming Payments'),
-									const SizedBox(height: AppSpacing.md),
-									const _UpcomingPaymentsCard(),
-									const SizedBox(height: AppSpacing.xl),
-									const _SectionHeader(title: 'Quick Actions'),
-									const SizedBox(height: AppSpacing.md),
-									const _QuickActionsSection(),
-								],
+						child: metricsAsync.when(
+							data: (DashboardMetrics metrics) => SingleChildScrollView(
+								padding: EdgeInsets.fromLTRB(horizontalPadding, AppSpacing.xl, horizontalPadding, AppSpacing.xl),
+								child: Column(
+									crossAxisAlignment: CrossAxisAlignment.start,
+									children: <Widget>[
+										const _GreetingSection(),
+										const SizedBox(height: AppSpacing.xl),
+										const _SectionHeader(title: 'Financial Summary'),
+										const SizedBox(height: AppSpacing.md),
+										_SummaryCardsGrid(columns: summaryColumns, metrics: metrics),
+										const SizedBox(height: AppSpacing.xl),
+										const _SectionHeader(title: 'Upcoming Payments'),
+										const SizedBox(height: AppSpacing.md),
+										const _UpcomingPaymentsCard(),
+										const SizedBox(height: AppSpacing.xl),
+										const _SectionHeader(title: 'Quick Actions'),
+										const SizedBox(height: AppSpacing.md),
+										const _QuickActionsSection(),
+									],
+								),
+							),
+							loading: () => const Center(child: CircularProgressIndicator()),
+							error: (Object error, StackTrace stackTrace) => Center(
+								child: Text('Unable to load dashboard metrics: $error'),
 							),
 						),
 					),
@@ -104,16 +140,17 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _SummaryCardsGrid extends StatelessWidget {
-	const _SummaryCardsGrid({required this.columns});
+	const _SummaryCardsGrid({required this.columns, required this.metrics});
 
 	final int columns;
+	final DashboardMetrics metrics;
 
 	@override
 	Widget build(BuildContext context) {
 		final List<_SummaryCardData> items = <_SummaryCardData>[
-			const _SummaryCardData(title: 'Net Worth', value: r'$0.00'),
-			const _SummaryCardData(title: 'Monthly Income', value: r'$0.00'),
-			const _SummaryCardData(title: 'Monthly Expenses', value: r'$0.00'),
+			_SummaryCardData(title: 'Net Balance', value: _formatCurrency(metrics.netBalance)),
+			_SummaryCardData(title: 'Total Income', value: _formatCurrency(metrics.totalIncome)),
+			_SummaryCardData(title: 'Total Expenses', value: _formatCurrency(metrics.totalExpenses)),
 		];
 
 		return Wrap(
@@ -137,6 +174,18 @@ class _SummaryCardsGrid extends StatelessWidget {
 		final double spacing = AppSpacing.md * (columns - 1);
 		return (contentWidth - (horizontalPadding * 2) - spacing) / columns;
 	}
+}
+
+class DashboardMetrics {
+	const DashboardMetrics({
+		required this.totalIncome,
+		required this.totalExpenses,
+		required this.netBalance,
+	});
+
+	final double totalIncome;
+	final double totalExpenses;
+	final double netBalance;
 }
 
 class _SummaryCardData {
@@ -219,29 +268,32 @@ class _QuickActionsSection extends StatelessWidget {
 		return Wrap(
 			runSpacing: AppSpacing.sm,
 			spacing: AppSpacing.sm,
-			children: const <Widget>[
-				_QuickActionButton(label: 'Add Income'),
-				_QuickActionButton(label: 'Add Debt'),
-				_QuickActionButton(label: 'Register Payment'),
+			children: <Widget>[
+				_QuickActionButton(label: 'Income', route: '/income'),
+				_QuickActionButton(label: 'Expense', route: '/expenses'),
+				_QuickActionButton(label: 'Cash Accounts', route: '/cash-accounts'),
+				_QuickActionButton(label: 'Debts', route: '/debts'),
+				_QuickActionButton(label: 'Goals', route: '/goals'),
 			],
 		);
 	}
 }
 
 class _QuickActionButton extends StatelessWidget {
-	const _QuickActionButton({required this.label});
+	const _QuickActionButton({required this.label, required this.route});
 
 	final String label;
+	final String route;
 
 	@override
 	Widget build(BuildContext context) {
-		return ElevatedButton(
-			onPressed: () {},
-			style: ElevatedButton.styleFrom(
-				backgroundColor: Theme.of(context).colorScheme.primary,
-				foregroundColor: Theme.of(context).colorScheme.onPrimary,
-			),
+		return FilledButton.tonal(
+			onPressed: () => context.go(route),
 			child: Text(label),
 		);
 	}
+}
+
+String _formatCurrency(double value) {
+	return '\$${value.toStringAsFixed(2)}';
 }
