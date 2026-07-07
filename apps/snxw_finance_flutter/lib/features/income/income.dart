@@ -6,6 +6,7 @@ import '../../core/database/database_provider.dart';
 import '../../core/repositories/income_repository.dart';
 import '../../shared/design/design.dart';
 import '../../shared/models/models.dart';
+import '../dashboard/dashboard.dart';
 
 final FutureProvider<List<Income>> incomesProvider = FutureProvider<List<Income>>(
   (ref) async {
@@ -485,6 +486,7 @@ class _AddIncomeSheetState extends ConsumerState<_AddIncomeSheet> {
         ),
       );
 
+      ref.invalidate(dashboardMetricsProvider);
       widget.onSaved();
 
       if (!mounted) return;

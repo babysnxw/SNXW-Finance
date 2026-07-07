@@ -6,6 +6,7 @@ import '../../core/database/database_provider.dart';
 import '../../core/repositories/financial_goal_repository.dart';
 import '../../shared/design/design.dart';
 import '../../shared/models/models.dart';
+import '../dashboard/dashboard.dart';
 
 final FutureProvider<List<FinancialGoal>> goalsProvider = FutureProvider<List<FinancialGoal>>(
   (ref) async {
@@ -576,6 +577,7 @@ class _AddGoalSheetState extends ConsumerState<_AddGoalSheet> {
         ),
       );
 
+      ref.invalidate(dashboardMetricsProvider);
       widget.onSaved();
 
       if (!mounted) {

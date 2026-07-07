@@ -279,7 +279,7 @@ class SettingsPage extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          "Desarrollado con ❤️ por SNXW Labs",
+          "Desarrollado con ❤️ por Snxw Labs",
           style: AppTypography.label.copyWith(
             color: Theme.of(context).colorScheme.primary,
           ),

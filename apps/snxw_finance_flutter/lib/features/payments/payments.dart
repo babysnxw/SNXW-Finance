@@ -6,6 +6,7 @@ import '../../core/database/database_provider.dart';
 import '../../core/repositories/payment_repository.dart';
 import '../../shared/design/design.dart';
 import '../../shared/models/models.dart';
+import '../dashboard/dashboard.dart';
 
 final FutureProvider<List<Payment>> paymentsProvider = FutureProvider<List<Payment>>(
   (ref) async {
@@ -497,6 +498,7 @@ class _AddPaymentSheetState extends ConsumerState<_AddPaymentSheet> {
         ),
       );
 
+      ref.invalidate(dashboardMetricsProvider);
       widget.onSaved();
 
       if (!mounted) return;

@@ -6,6 +6,7 @@ import '../../core/database/database_provider.dart';
 import '../../core/repositories/cash_account_repository.dart';
 import '../../shared/design/design.dart';
 import '../../shared/models/models.dart';
+import '../dashboard/dashboard.dart';
 
 final FutureProvider<List<CashAccount>> cashAccountsProvider = FutureProvider<List<CashAccount>>(
   (ref) async {
@@ -438,7 +439,8 @@ class _AddCashAccountSheetState extends ConsumerState<_AddCashAccountSheet> {
           currency: _selectedCurrency,
         ),
       );
-
+      
+      ref.invalidate(dashboardMetricsProvider);
       widget.onSaved();
 
       if (!mounted) return;
