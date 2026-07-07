@@ -11,4 +11,8 @@ class IncomeRecord {
   late DateTime date;
   String? recurrence;
   String? notes;
+
+  // Si necesitas estos campos, descoméntalos
+  // List<String>? budgetIds;
+  // List<String>? financialGoalIds;
 }

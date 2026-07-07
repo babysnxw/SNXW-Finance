@@ -1,5 +1,4 @@
 import 'package:isar/isar.dart';
-
 import '../../shared/models/models.dart';
 import '../database/income_record.dart';
 
@@ -26,7 +25,7 @@ class IncomeRepository {
 
   Income _toIncome(IncomeRecord record) {
     return Income(
-      id: record.id.toString(),
+      id: record.id.toString(), // Esto es correcto
       source: record.source,
       amount: record.amount,
       date: record.date,
@@ -36,7 +35,11 @@ class IncomeRepository {
   }
 
   IncomeRecord _fromIncome(Income income) {
+    // Si income.id es numérico, lo usamos como ID de Isar
+    final int? recordId = int.tryParse(income.id);
+    
     return IncomeRecord()
+      ..id = recordId ?? Isar.autoIncrement
       ..source = income.source
       ..amount = income.amount
       ..date = income.date
