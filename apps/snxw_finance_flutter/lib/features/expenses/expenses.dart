@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/database/database_provider.dart';
 import '../../core/repositories/expense_repository.dart';
@@ -21,15 +22,28 @@ class ExpensesPage extends ConsumerWidget {
     final AsyncValue<List<Expense>> expensesAsync = ref.watch(expensesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Expenses')),
-      floatingActionButton: FloatingActionButton(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () => context.go('/'),
+        ),
+        title: const Text("Registro de Gastos"),
+        elevation: 0,
+      ),
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openAddExpenseSheet(context, ref),
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text("Nuevo Gasto"),
       ),
       body: SafeArea(
         child: expensesAsync.when(
-          data: (List<Expense> expenses) => _ExpenseList(expenses: expenses),
-          loading: () => const Center(child: CircularProgressIndicator()),
+          data: (List<Expense> expenses) => _ExpenseList(
+            expenses: expenses,
+            onAddPressed: () => _openAddExpenseSheet(context, ref),
+          ),
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
           error: (Object error, StackTrace stackTrace) => _ExpenseErrorState(
             error: error,
             onRetry: () => ref.invalidate(expensesProvider),
@@ -55,9 +69,13 @@ class ExpensesPage extends ConsumerWidget {
 }
 
 class _ExpenseList extends StatelessWidget {
-  const _ExpenseList({required this.expenses});
+  const _ExpenseList({
+    required this.expenses,
+    this.onAddPressed,
+  });
 
   final List<Expense> expenses;
+  final VoidCallback? onAddPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -72,18 +90,37 @@ class _ExpenseList extends StatelessWidget {
                 padding: const EdgeInsets.all(AppSpacing.xl),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(Icons.receipt_long_outlined, size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    const SizedBox(height: AppSpacing.md),
+                  children: [
+                    CircleAvatar(
+                      radius: 34,
+                      backgroundColor: Colors.red.withOpacity(.12),
+                      child: const Icon(
+                        Icons.trending_down_rounded,
+                        color: Colors.red,
+                        size: 34,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
                     Text(
-                      'No expenses yet',
-                      style: AppTypography.title.copyWith(fontWeight: FontWeight.w700),
+                      "No hay gastos registrados",
+                      textAlign: TextAlign.center,
+                      style: AppTypography.title.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Add your first expense to start tracking spending.',
+                      "Comienza a registrar tus gastos para un mejor control financiero.",
                       textAlign: TextAlign.center,
-                      style: AppTypography.body.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: AppTypography.body.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    FilledButton.icon(
+                      onPressed: onAddPressed,
+                      icon: const Icon(Icons.add),
+                      label: const Text("Registrar Gasto"),
                     ),
                   ],
                 ),
@@ -95,45 +132,81 @@ class _ExpenseList extends StatelessWidget {
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xl),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: expenses.length,
-      separatorBuilder: (BuildContext context, int index) => const SizedBox(height: AppSpacing.md),
-      itemBuilder: (BuildContext context, int index) {
+      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+      itemBuilder: (context, index) {
         final Expense expense = expenses[index];
 
         return Card(
+          elevation: 2,
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+            contentPadding: const EdgeInsets.all(AppSpacing.md),
             leading: CircleAvatar(
-              backgroundColor: Theme.of(context).colorScheme.errorContainer,
-              foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-              child: const Icon(Icons.trending_down_rounded),
+              backgroundColor: expense.isEssential 
+                ? Colors.blue.withOpacity(.15)
+                : Colors.red.withOpacity(.15),
+              child: Icon(
+                expense.isEssential 
+                  ? Icons.check_circle_outline
+                  : Icons.attach_money_rounded,
+                color: expense.isEssential ? Colors.blue : Colors.red,
+              ),
             ),
             title: Text(
               expense.category,
-              style: AppTypography.title.copyWith(fontWeight: FontWeight.w700),
+              style: AppTypography.title.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             subtitle: Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              padding: const EdgeInsets.only(top: AppSpacing.sm),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(_formatCurrency(expense.amount), style: AppTypography.body.copyWith(fontWeight: FontWeight.w700)),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(_formatDate(context, expense.date), style: AppTypography.body.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                  if (expense.recurrence != null) ...<Widget>[
-                    const SizedBox(height: AppSpacing.xs),
-                    Text('Recurrence: ${expense.recurrence}', style: AppTypography.body.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                  ],
-                  const SizedBox(height: AppSpacing.xs),
+                children: [
                   Text(
-                    expense.isEssential ? 'Essential expense' : 'Non-essential expense',
-                    style: AppTypography.body.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    _formatCurrency(expense.amount),
+                    style: AppTypography.headline.copyWith(
+                      color: expense.isEssential ? Colors.blue.shade700 : Colors.red.shade700,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  if (expense.notes != null && expense.notes!.trim().isNotEmpty) ...<Widget>[
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(expense.notes!, style: AppTypography.body.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Fecha: ${_formatDate(context, expense.date)}",
+                    style: AppTypography.body.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  if (expense.isEssential) ...[
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade100,
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                      ),
+                      child: Text(
+                        "Esencial",
+                        style: AppTypography.label.copyWith(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (expense.notes != null && expense.notes!.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      expense.notes!,
+                      style: AppTypography.body.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ],
               ),
@@ -146,7 +219,10 @@ class _ExpenseList extends StatelessWidget {
 }
 
 class _ExpenseErrorState extends StatelessWidget {
-  const _ExpenseErrorState({required this.error, required this.onRetry});
+  const _ExpenseErrorState({
+    required this.error,
+    required this.onRetry,
+  });
 
   final Object error;
   final VoidCallback onRetry;
@@ -158,12 +234,42 @@ class _ExpenseErrorState extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text('Unable to load expenses', style: AppTypography.title.copyWith(fontWeight: FontWeight.w700)),
+          children: [
+            const Icon(
+              Icons.error_outline_rounded,
+              color: Colors.red,
+              size: 50,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              "Error al cargar los gastos",
+              style: AppTypography.title.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: AppSpacing.sm),
-            Text(error.toString(), textAlign: TextAlign.center, style: AppTypography.body.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              "No fue posible obtener la lista de gastos. Verifica tu conexión e intenta nuevamente.",
+              textAlign: TextAlign.center,
+              style: AppTypography.body.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              error.toString(),
+              textAlign: TextAlign.center,
+              style: AppTypography.body.copyWith(
+                color: Theme.of(context).colorScheme.error,
+                fontSize: 12,
+              ),
+            ),
             const SizedBox(height: AppSpacing.lg),
-            FilledButton(onPressed: onRetry, child: const Text('Retry')),
+            FilledButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: const Text("Reintentar"),
+            ),
           ],
         ),
       ),
@@ -185,17 +291,10 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
+
   DateTime _selectedDate = DateTime.now();
-  String? _selectedRecurrence;
   bool _isEssential = false;
   bool _isSaving = false;
-
-  static const List<String> _recurrenceOptions = <String>[
-    'Weekly',
-    'Biweekly',
-    'Monthly',
-    'Yearly',
-  ];
 
   @override
   void dispose() {
@@ -210,38 +309,62 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
     final EdgeInsets viewInsets = MediaQuery.viewInsetsOf(context);
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, viewInsets.bottom + AppSpacing.lg),
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.sm,
+        AppSpacing.lg,
+        viewInsets.bottom + AppSpacing.lg,
+      ),
       child: Form(
         key: _formKey,
         child: SingleChildScrollView(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text('Add Expense', style: AppTypography.headline.copyWith(fontWeight: FontWeight.w700)),
+            children: [
+              Text(
+                "Registrar Nuevo Gasto",
+                style: AppTypography.headline.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                "Completa los campos para registrar un nuevo gasto",
+                style: AppTypography.body.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
               const SizedBox(height: AppSpacing.lg),
               TextFormField(
                 controller: _categoryController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'Category'),
-                validator: (String? value) {
+                decoration: const InputDecoration(
+                  labelText: "Categoría",
+                  hintText: "Ej: Alimentación, Transporte, Entretenimiento",
+                  prefixIcon: Icon(Icons.category_outlined),
+                ),
+                validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Category is required';
+                    return "Por favor, especifica la categoría del gasto.";
                   }
-
                   return null;
                 },
               ),
               const SizedBox(height: AppSpacing.md),
               TextFormField(
                 controller: _amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'Amount'),
-                validator: (String? value) {
-                  final double? parsed = double.tryParse((value ?? '').trim());
-                  if (parsed == null || parsed <= 0) {
-                    return 'Enter a valid amount';
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: const InputDecoration(
+                  labelText: "Monto",
+                  hintText: "0.00",
+                  prefixIcon: Icon(Icons.attach_money_rounded),
+                ),
+                validator: (value) {
+                  final amount = double.tryParse(value ?? "");
+
+                  if (amount == null || amount <= 0) {
+                    return "Ingresa un monto válido mayor a cero.";
                   }
 
                   return null;
@@ -249,62 +372,69 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
               ),
               const SizedBox(height: AppSpacing.md),
               InkWell(
-                onTap: _pickDate,
                 borderRadius: BorderRadius.circular(AppRadius.md),
+                onTap: _pickDate,
                 child: InputDecorator(
-                  decoration: const InputDecoration(labelText: 'Date'),
-                  child: Text(_formatDate(context, _selectedDate)),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              DropdownButtonFormField<String?>(
-                initialValue: _selectedRecurrence,
-                decoration: const InputDecoration(labelText: 'Recurrence'),
-                items: <DropdownMenuItem<String?>>[
-                  const DropdownMenuItem<String?>(value: null, child: Text('One-time')),
-                  ..._recurrenceOptions.map(
-                    (String option) => DropdownMenuItem<String?>(value: option, child: Text(option)),
+                  decoration: const InputDecoration(
+                    labelText: "Fecha del Gasto",
+                    prefixIcon: Icon(Icons.calendar_month),
                   ),
-                ],
-                onChanged: (String? value) {
-                  setState(() {
-                    _selectedRecurrence = value;
-                  });
-                },
+                  child: Text(
+                    _formatDate(context, _selectedDate),
+                    style: AppTypography.body,
+                  ),
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Essential'),
+                title: const Text("Gasto Esencial"),
                 subtitle: Text(
-                  'Mark this expense as essential.',
-                  style: AppTypography.body.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  "Los gastos esenciales son necesarios para tu día a día",
+                  style: AppTypography.body.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                 ),
                 value: _isEssential,
-                onChanged: (bool value) {
+                onChanged: (value) {
                   setState(() {
                     _isEssential = value;
                   });
                 },
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.trailing,
               ),
               const SizedBox(height: AppSpacing.md),
               TextFormField(
                 controller: _notesController,
                 minLines: 3,
-                maxLines: 5,
-                textInputAction: TextInputAction.newline,
-                decoration: const InputDecoration(labelText: 'Notes (optional)'),
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: "Notas Adicionales",
+                  hintText: "Agrega información extra sobre este gasto",
+                  prefixIcon: Icon(Icons.notes_rounded),
+                ),
               ),
-              const SizedBox(height: AppSpacing.lg),
-              FilledButton(
+              const SizedBox(height: AppSpacing.xl),
+              FilledButton.icon(
                 onPressed: _isSaving ? null : _save,
-                child: _isSaving
+                icon: _isSaving
                     ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
                       )
-                    : const Text('Save Expense'),
+                    : const Icon(Icons.save),
+                label: Text(
+                  _isSaving ? "Guardando..." : "Guardar Gasto",
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              TextButton(
+                onPressed: _isSaving ? null : () => Navigator.pop(context),
+                child: const Text("Cancelar"),
               ),
             ],
           ),
@@ -314,22 +444,22 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
   }
 
   Future<void> _pickDate() async {
-    final DateTime? pickedDate = await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
 
-    if (pickedDate != null) {
+    if (picked != null) {
       setState(() {
-        _selectedDate = pickedDate;
+        _selectedDate = picked;
       });
     }
   }
 
   Future<void> _save() async {
-    if (!(_formKey.currentState?.validate() ?? false)) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
@@ -338,32 +468,43 @@ class _AddExpenseSheetState extends ConsumerState<_AddExpenseSheet> {
     });
 
     try {
-      final ExpenseRepository repository = ExpenseRepository(await ref.read(isarProvider.future));
+      final repository = ExpenseRepository(
+        await ref.read(isarProvider.future),
+      );
+
       await repository.save(
         Expense(
           id: DateTime.now().microsecondsSinceEpoch.toString(),
           category: _categoryController.text.trim(),
-          amount: double.parse(_amountController.text.trim()),
+          amount: double.parse(_amountController.text),
           date: _selectedDate,
-          recurrence: _selectedRecurrence,
-          notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
           isEssential: _isEssential,
+          notes: _notesController.text.trim().isEmpty
+              ? null
+              : _notesController.text.trim(),
         ),
       );
 
       widget.onSaved();
-      if (!mounted) {
-        return;
-      }
+
+      if (!mounted) return;
 
       Navigator.of(context).pop();
-    } catch (error) {
-      if (!mounted) {
-        return;
-      }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not save expense: $error')),
+        const SnackBar(
+          content: Text("Gasto registrado exitosamente."),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error al registrar el gasto: $e"),
+          backgroundColor: Colors.red,
+        ),
       );
     } finally {
       if (mounted) {
