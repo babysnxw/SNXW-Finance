@@ -93,7 +93,7 @@ class _DebtList extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 34,
-                      backgroundColor: Colors.orange.withOpacity(.12),
+                      backgroundColor: Colors.orange.withValues(alpha: 0.12),
                       child: const Icon(
                         Icons.credit_card_rounded,
                         color: Colors.orange,
@@ -134,7 +134,7 @@ class _DebtList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: debts.length,
-      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (context, index) {
         final Debt debt = debts[index];
 
@@ -143,7 +143,7 @@ class _DebtList extends StatelessWidget {
           child: ListTile(
             contentPadding: const EdgeInsets.all(AppSpacing.md),
             leading: CircleAvatar(
-              backgroundColor: Colors.orange.withOpacity(.15),
+              backgroundColor: Colors.orange.withValues(alpha: 0.15),
               child: const Icon(
                 Icons.credit_card_rounded,
                 color: Colors.orange,
@@ -189,7 +189,7 @@ class _DebtList extends StatelessWidget {
                       vertical: AppSpacing.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(debt.status).withOpacity(.1),
+                      color: _getStatusColor(debt.status).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppRadius.sm),
                     ),
                     child: Text(
@@ -576,8 +576,4 @@ class _AddDebtSheetState extends ConsumerState<_AddDebtSheet> {
 
 String _formatCurrency(double value) {
   return '\$${value.toStringAsFixed(2)}';
-}
-
-String _formatDate(BuildContext context, DateTime date) {
-  return MaterialLocalizations.of(context).formatMediumDate(date);
 }

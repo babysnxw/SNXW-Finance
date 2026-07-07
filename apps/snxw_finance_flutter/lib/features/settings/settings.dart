@@ -28,7 +28,7 @@ class SettingsPage extends StatelessWidget {
               elevation: 2,
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue.withOpacity(.15),
+                  backgroundColor: Colors.blue.withValues(alpha: 0.15),
                   child: const Icon(
                     Icons.person_outline_rounded,
                     color: Colors.blue,
@@ -47,7 +47,7 @@ class SettingsPage extends StatelessWidget {
               elevation: 2,
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.green.withOpacity(.15),
+                  backgroundColor: Colors.green.withValues(alpha: 0.15),
                   child: const Icon(
                     Icons.security_rounded,
                     color: Colors.green,
@@ -76,7 +76,7 @@ class SettingsPage extends StatelessWidget {
                 onChanged: (bool value) {
                   // TODO: Implementar cambio de tema
                 },
-                activeColor: Colors.blue,
+                activeThumbColor: Colors.blue, activeTrackColor: Colors.blue.withValues(alpha: 0.3),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.md,
                   vertical: AppSpacing.xs,
@@ -88,7 +88,7 @@ class SettingsPage extends StatelessWidget {
               elevation: 2,
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.orange.withOpacity(.15),
+                  backgroundColor: Colors.orange.withValues(alpha: 0.15),
                   child: const Icon(
                     Icons.notifications_outlined,
                     color: Colors.orange,
@@ -107,7 +107,7 @@ class SettingsPage extends StatelessWidget {
               elevation: 2,
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.purple.withOpacity(.15),
+                  backgroundColor: Colors.purple.withValues(alpha: 0.15),
                   child: const Icon(
                     Icons.language_rounded,
                     color: Colors.purple,
@@ -131,7 +131,7 @@ class SettingsPage extends StatelessWidget {
               elevation: 2,
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.red.withOpacity(.15),
+                  backgroundColor: Colors.red.withValues(alpha: 0.15),
                   child: const Icon(
                     Icons.backup_rounded,
                     color: Colors.red,
@@ -150,7 +150,7 @@ class SettingsPage extends StatelessWidget {
               elevation: 2,
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.grey.withOpacity(.15),
+                  backgroundColor: Colors.grey.withValues(alpha: 0.15),
                   child: const Icon(
                     Icons.delete_outline_rounded,
                     color: Colors.grey,
@@ -174,7 +174,7 @@ class SettingsPage extends StatelessWidget {
               elevation: 2,
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.blue.withOpacity(.15),
+                  backgroundColor: Colors.blue.withValues(alpha: 0.15),
                   child: const Icon(
                     Icons.info_outline_rounded,
                     color: Colors.blue,
@@ -193,7 +193,7 @@ class SettingsPage extends StatelessWidget {
               elevation: 2,
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.green.withOpacity(.15),
+                  backgroundColor: Colors.green.withValues(alpha: 0.15),
                   child: const Icon(
                     Icons.help_outline_rounded,
                     color: Colors.green,

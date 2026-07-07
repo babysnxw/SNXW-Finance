@@ -91,7 +91,7 @@ class _IncomeList extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 34,
-                      backgroundColor: Colors.green.withOpacity(.12),
+                      backgroundColor: Colors.green.withValues(alpha: 0.12),
                       child: const Icon(
                         Icons.trending_up_rounded,
                         color: Colors.green,
@@ -132,7 +132,7 @@ class _IncomeList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: incomes.length,
-      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (context, index) {
         final income = incomes[index];
 
@@ -141,7 +141,7 @@ class _IncomeList extends StatelessWidget {
           child: ListTile(
             contentPadding: const EdgeInsets.all(AppSpacing.md),
             leading: CircleAvatar(
-              backgroundColor: Colors.green.withOpacity(.15),
+              backgroundColor: Colors.green.withValues(alpha: 0.15),
               child: const Icon(
                 Icons.attach_money_rounded,
                 color: Colors.green,

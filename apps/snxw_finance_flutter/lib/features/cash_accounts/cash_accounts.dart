@@ -93,7 +93,7 @@ class _CashAccountList extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 34,
-                      backgroundColor: Colors.purple.withOpacity(.12),
+                      backgroundColor: Colors.purple.withValues(alpha: 0.12),
                       child: const Icon(
                         Icons.account_balance_wallet_rounded,
                         color: Colors.purple,
@@ -134,7 +134,7 @@ class _CashAccountList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: accounts.length,
-      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (context, index) {
         final CashAccount account = accounts[index];
 
@@ -143,7 +143,7 @@ class _CashAccountList extends StatelessWidget {
           child: ListTile(
             contentPadding: const EdgeInsets.all(AppSpacing.md),
             leading: CircleAvatar(
-              backgroundColor: Colors.purple.withOpacity(.15),
+              backgroundColor: Colors.purple.withValues(alpha: 0.15),
               child: const Icon(
                 Icons.account_balance_wallet_rounded,
                 color: Colors.purple,
@@ -472,8 +472,4 @@ class _AddCashAccountSheetState extends ConsumerState<_AddCashAccountSheet> {
 
 String _formatCurrency(double value) {
   return '\$${value.toStringAsFixed(2)}';
-}
-
-String _formatDate(BuildContext context, DateTime date) {
-  return MaterialLocalizations.of(context).formatMediumDate(date);
 }

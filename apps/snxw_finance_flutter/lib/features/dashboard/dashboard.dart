@@ -284,7 +284,7 @@ class _SummaryCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.xs),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(.12),
+                    color: color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Icon(
@@ -338,7 +338,7 @@ class _UpcomingPaymentsCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.xs),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(.12),
+                    color: Colors.orange.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: const Icon(
@@ -455,7 +455,7 @@ class _QuickActionButton extends StatelessWidget {
     return FilledButton.tonal(
       onPressed: () => context.go(route),
       style: FilledButton.styleFrom(
-        backgroundColor: color.withOpacity(.1),
+        backgroundColor: color.withValues(alpha: 0.1),
         foregroundColor: color,
       ),
       child: Row(

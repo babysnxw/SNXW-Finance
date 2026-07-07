@@ -93,7 +93,7 @@ class _ExpenseList extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 34,
-                      backgroundColor: Colors.red.withOpacity(.12),
+                      backgroundColor: Colors.red.withValues(alpha: 0.12),
                       child: const Icon(
                         Icons.trending_down_rounded,
                         color: Colors.red,
@@ -134,7 +134,7 @@ class _ExpenseList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: expenses.length,
-      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (context, index) {
         final Expense expense = expenses[index];
 
@@ -144,8 +144,8 @@ class _ExpenseList extends StatelessWidget {
             contentPadding: const EdgeInsets.all(AppSpacing.md),
             leading: CircleAvatar(
               backgroundColor: expense.isEssential 
-                ? Colors.blue.withOpacity(.15)
-                : Colors.red.withOpacity(.15),
+                ? Colors.blue.withValues(alpha: 0.15)
+                : Colors.red.withValues(alpha: 0.15),
               child: Icon(
                 expense.isEssential 
                   ? Icons.check_circle_outline

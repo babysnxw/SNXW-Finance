@@ -93,7 +93,7 @@ class _GoalList extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 34,
-                      backgroundColor: Colors.blue.withOpacity(.12),
+                      backgroundColor: Colors.blue.withValues(alpha: 0.12),
                       child: const Icon(
                         Icons.flag_rounded,
                         color: Colors.blue,
@@ -224,7 +224,7 @@ class _GoalList extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 LinearProgressIndicator(
                   value: progress.clamp(0, 1),
-                  backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   color: isCompleted ? Colors.green : Colors.blue,
                   minHeight: 8,
                   borderRadius: BorderRadius.circular(AppRadius.sm),

@@ -93,7 +93,7 @@ class _PaymentList extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 34,
-                      backgroundColor: Colors.teal.withOpacity(.12),
+                      backgroundColor: Colors.teal.withValues(alpha: 0.12),
                       child: const Icon(
                         Icons.payment_rounded,
                         color: Colors.teal,
@@ -134,7 +134,7 @@ class _PaymentList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(AppSpacing.lg),
       itemCount: payments.length,
-      separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
       itemBuilder: (context, index) {
         final Payment payment = payments[index];
 
@@ -143,7 +143,7 @@ class _PaymentList extends StatelessWidget {
           child: ListTile(
             contentPadding: const EdgeInsets.all(AppSpacing.md),
             leading: CircleAvatar(
-              backgroundColor: Colors.teal.withOpacity(.15),
+              backgroundColor: Colors.teal.withValues(alpha: 0.15),
               child: const Icon(
                 Icons.payment_rounded,
                 color: Colors.teal,
@@ -181,7 +181,7 @@ class _PaymentList extends StatelessWidget {
                       vertical: AppSpacing.xs,
                     ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(payment.status).withOpacity(.1),
+                      color: _getStatusColor(payment.status).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppRadius.sm),
                     ),
                     child: Text(
