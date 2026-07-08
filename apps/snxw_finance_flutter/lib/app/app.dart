@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'router.dart';
-import 'theme.dart';
+import '../shared/design/app_theme.dart';
 
 class SnxwFinanceApp extends StatelessWidget {
   const SnxwFinanceApp({super.key});

@@ -9,11 +9,8 @@ import '../../shared/design/design.dart';
 import '../../shared/models/models.dart';
 import '../income/income.dart';
 import '../expenses/expenses.dart';
-import '../cash_accounts/cash_accounts.dart';
 import '../debts/debts.dart';
 import '../goals/goals.dart';
-import '../payments/payments.dart';
-import '../settings/settings.dart';
 
 // ============================================================
 // 1. PROVIDERS
@@ -262,11 +259,11 @@ class DashboardPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              ref.refresh(dashboardMetricsProvider);
-              ref.refresh(incomesProvider);
-              ref.refresh(expensesProvider);
-              ref.refresh(debtsProvider);
-              ref.refresh(goalsProvider);
+              ref.invalidate(dashboardMetricsProvider);
+              ref.invalidate(incomesProvider);
+              ref.invalidate(expensesProvider);
+              ref.invalidate(debtsProvider);
+              ref.invalidate(goalsProvider);
             },
           ),
           IconButton(
@@ -278,11 +275,11 @@ class DashboardPage extends ConsumerWidget {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            ref.refresh(dashboardMetricsProvider);
-            ref.refresh(incomesProvider);
-            ref.refresh(expensesProvider);
-            ref.refresh(debtsProvider);
-            ref.refresh(goalsProvider);
+            ref.invalidate(dashboardMetricsProvider);
+            ref.invalidate(incomesProvider);
+            ref.invalidate(expensesProvider);
+            ref.invalidate(debtsProvider);
+            ref.invalidate(goalsProvider);
           },
           child: metricsAsync.when(
             data: (metrics) => SingleChildScrollView(
@@ -337,11 +334,11 @@ class DashboardPage extends ConsumerWidget {
                   const SizedBox(height: AppSpacing.md),
                   FilledButton.icon(
                     onPressed: () {
-                      ref.refresh(dashboardMetricsProvider);
-                      ref.refresh(incomesProvider);
-                      ref.refresh(expensesProvider);
-                      ref.refresh(debtsProvider);
-                      ref.refresh(goalsProvider);
+                      ref.invalidate(dashboardMetricsProvider);
+                      ref.invalidate(incomesProvider);
+                      ref.invalidate(expensesProvider);
+                      ref.invalidate(debtsProvider);
+                      ref.invalidate(goalsProvider);
                     },
                     icon: const Icon(Icons.refresh),
                     label: const Text('Reintentar'),
@@ -578,7 +575,7 @@ class _FinancialAdvisorCard extends StatelessWidget {
                     ],
                   ),
                 );
-              }).toList(),
+              }),
             ],
             if (hasData && advisor.goals.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.md),
@@ -986,7 +983,7 @@ class _DebtListCard extends ConsumerWidget {
                           Expanded(
                             child: LinearProgressIndicator(
                               value: progress.clamp(0, 1),
-                              backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                               color: progress > 0.7 ? Colors.orange : Colors.blue,
                               minHeight: 6,
                               borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -1054,7 +1051,7 @@ class _DebtListCard extends ConsumerWidget {
           child: CircularProgressIndicator(),
         ),
       ),
-      error: (_, __) => Card(
+      error: (_, _) => Card(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Text(
@@ -1190,7 +1187,7 @@ class _MotivationalGoalsCard extends ConsumerWidget {
                           Expanded(
                             child: LinearProgressIndicator(
                               value: progress.clamp(0, 1),
-                              backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                               color: isCompleted ? Colors.green : Colors.blue,
                               minHeight: 6,
                               borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -1239,7 +1236,7 @@ class _MotivationalGoalsCard extends ConsumerWidget {
           child: CircularProgressIndicator(),
         ),
       ),
-      error: (_, __) => Card(
+      error: (_, _) => Card(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Text(
